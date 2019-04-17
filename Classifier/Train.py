@@ -33,7 +33,7 @@ def evaluate(X, Y, sess, model):
         x = X[i * hp.batch_size: (i + 1) * hp.batch_size]
         y = Y[i * hp.batch_size: (i + 1) * hp.batch_size]
 
-        _loss, _acc = sess.run([model.loss, model.acc], {model.x: x, model.y: y, model.prediction_grid: x})
+        _loss, _acc = sess.run([model.loss, model.acc], {model.x: x, model.y: y})
         sum_loss += _loss
         sum_acc += _acc
 
@@ -83,7 +83,7 @@ def train():
             ### Get mini-batches
             x = X[i * hp.batch_size: (i + 1) * hp.batch_size]
             y = Y[i * hp.batch_size: (i + 1) * hp.batch_size]
-            feed_dict = {g.x: x, g.y: y, g.prediction_grid: x}
+            feed_dict = {g.x: x, g.y: y}
 
             if total_batch % hp.save_per_batch == 0:
                 # 每多少轮次将训练结果写入tensorboard scalar

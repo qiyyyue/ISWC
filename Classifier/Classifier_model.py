@@ -7,7 +7,6 @@ class classifier_model(object):
         self.train = _train
         self.x = tf.placeholder(tf.float32, [None, hp.input_dim], 'x')
         self.y = tf.placeholder(tf.float32, [None, 1], 'y')
-        self.prediction_grid = tf.placeholder(tf.float32, [None, hp.input_dim], 'prediction_grid')
         self.build_model()
 
     def build_model(self):

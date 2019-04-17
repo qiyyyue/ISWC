@@ -10,8 +10,9 @@ from Classifier.Classifier_model import classifier_model
 
 save_dir = '../CheckPionts/Classifier/'
 tensorboard_dir = '../tensorboard/Classifier'
-save_path = os.path.join(save_dir, 'TransE/model')
+save_path = os.path.join(save_dir, 'TML1K/model')
 
+hp.mode = 'avg_bias'
 def Test():
     model = classifier_model(False)
     print("Graph loaded")
