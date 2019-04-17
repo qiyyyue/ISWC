@@ -3,16 +3,17 @@ from __future__ import print_function
 import os
 
 import tensorflow as tf
+import numpy as np
+from Classifier.hyperparams import Hyperparams as hp
+from Classifier.data_load import load_val_data, load_test_data
+from Classifier.Classifier_model import classifier_model
 
-from BiLSTM_CNN.hyperparams import Hyperparams as hp
-from BiLSTM_CNN.data_load import load_val_data, load_test_data
-from BiLSTM_CNN.modules import *
-from BiLSTM_CNN.BiLSTM_CNN_Model import bilstm_cnn_model
+save_dir = '../CheckPionts/Classifier/'
+tensorboard_dir = '../tensorboard/Classifier'
+save_path = os.path.join(save_dir, 'TransE/model')
 
-save_dir = '../CheckPionts/BILSTM/BILSTM_100/BILSTM_100'
-
-def val():
-    model = bilstm_cnn_model(False)
+def Test():
+    model = classifier_model(False)
     print("Graph loaded")
 
     hp.use_kg_embd = True
@@ -26,7 +27,7 @@ def val():
     session = tf.Session()
     session.run(tf.global_variables_initializer())
     saver = tf.train.Saver()
-    saver.restore(sess=session, save_path=save_dir)
+    saver.restore(sess=session, save_path=save_path)
 
     sum_acc = .0
     for i in range(len(X) // hp.batch_size):
@@ -38,10 +39,10 @@ def val():
         print(_acc)
         sum_acc += _acc
 
-    print('val acc is {:.4f}'.format(sum_acc/(len(X)//hp.batch_size)))
+    print('test acc is {:.4f}'.format(sum_acc/(len(X)//hp.batch_size)))
 
 
 
 
-val()
+Test()
 print("Done")

@@ -13,23 +13,22 @@ class Hyperparams:
     val_path = os.path.join(data_base_dir, 'val.txt')
     vocab_path = os.path.join(data_base_dir, 'vocab_cnt.txt')
 
-    kg_embd_model_dir = '../Model/kg_embedding_model/dbpedia_model/e_tr/'  #e_tr:transR   e_te:transE
+    kg_embd_model_dir = '../Model/kg_embedding_model/dbpedia_model/e_te/'  #e_tr:transR   e_te:transE
 
-    kg_embd_dim = 20 # kg embedding dim
+    input_dim = 61
+    kg_embd_dim = 20
 
-    num_filters = 32 # num of cnn filters
-    cnn_kernel_size = 3 # the kernel size
+    hidden_dim = 512
+    drop_rate = 0.1
 
-    lstm_hidden_units = 512
-    fc_hidden_dim = 128  #
+    mode = 'max_bias' # use: max_bias avg_bias all_bias
 
     # training
     batch_size = 32  # alias = N
     lr = 0.001  # learning rate. In paper, learning rate is adjusted to the global step.
     class_num = 2  # num of kinds of rel
-    maxlen = 50  # Maximum number of words in a sentence. alias = T.
+    maxlen = 5  # Maximum number of triples
     num_epochs = 500
-    dropout_rate = 0.1
 
     save_per_batch = 50
     print_per_batch = 20

@@ -4,15 +4,15 @@ import os
 import time
 from datetime import timedelta
 import tensorflow as tf
+import numpy as np
 
-from BiLSTM_CNN.hyperparams import Hyperparams as hp
-from BiLSTM_CNN.data_load import load_train_data, load_val_data
-from BiLSTM_CNN.modules import *
-from BiLSTM_CNN.BiLSTM_CNN_Model import bilstm_cnn_model
+from Classifier.hyperparams import Hyperparams as hp
+from Classifier.data_load import load_train_data, load_val_data
+from Classifier.Classifier_model import classifier_model
 
-save_dir = '../CheckPionts/BILSTM/'
-tensorboard_dir = '../tensorboard/BILSTM'
-save_path = os.path.join(save_dir, 'TransR/model')
+save_dir = '../CheckPionts/Classifier/'
+tensorboard_dir = '../tensorboard/Classifier'
+save_path = os.path.join(save_dir, 'TransE/model')
 def get_time_dif(start_time):
     """获取已使用时间"""
     end_time = time.time()
@@ -33,7 +33,7 @@ def evaluate(X, Y, sess, model):
         x = X[i * hp.batch_size: (i + 1) * hp.batch_size]
         y = Y[i * hp.batch_size: (i + 1) * hp.batch_size]
 
-        _loss, _acc = sess.run([model.loss, model.acc], {model.x: x, model.y: y})
+        _loss, _acc = sess.run([model.loss, model.acc], {model.x: x, model.y: y, model.prediction_grid: x})
         sum_loss += _loss
         sum_acc += _acc
 
@@ -43,7 +43,7 @@ def evaluate(X, Y, sess, model):
 
 def train():
     # Construct graph
-    g = bilstm_cnn_model(True)
+    g = classifier_model(True)
     print("Graph loaded")
 
     if not os.path.exists(tensorboard_dir):
@@ -68,7 +68,7 @@ def train():
     val_X, val_Y = load_val_data()
 
     start_time = time.time()
-    total_batch = 0  # 总批次
+    total_batch = 1  # 总批次
     best_acc_val = 0.0  # 最佳验证集准确率
     last_improved = 0  # 记录上一次提升批次
     require_improvement = 1000  # 如果超过1000轮未提升，提前结束训练
@@ -83,7 +83,7 @@ def train():
             ### Get mini-batches
             x = X[i * hp.batch_size: (i + 1) * hp.batch_size]
             y = Y[i * hp.batch_size: (i + 1) * hp.batch_size]
-            feed_dict = {g.x: x, g.y: y}
+            feed_dict = {g.x: x, g.y: y, g.prediction_grid: x}
 
             if total_batch % hp.save_per_batch == 0:
                 # 每多少轮次将训练结果写入tensorboard scalar
@@ -110,14 +110,14 @@ def train():
                 print(msg.format(total_batch, loss_train, acc_train, loss_val, acc_val, time_dif, improved_str))
 
 
-            sess.run(g.train_op, {g.x: x, g.y: y})
+            sess.run(g.train_op, feed_dict=feed_dict)
             total_batch += 1
 
-            if total_batch - last_improved > require_improvement:
-                # 验证集正确率长期不提升，提前结束训练
-                print("No optimization for a long time, auto-stopping...")
-                flag = True
-                break  # 跳出循环
-        if flag:  # 同上
-            break
+        #     if total_batch - last_improved > require_improvement:
+        #         # 验证集正确率长期不提升，提前结束训练
+        #         print("No optimization for a long time, auto-stopping...")
+        #         flag = True
+        #         break  # 跳出循环
+        # if flag:  # 同上
+        #     break
 train()
